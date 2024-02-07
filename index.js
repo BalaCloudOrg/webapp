@@ -20,15 +20,14 @@ require("./routes/index")(app);
 
 User.sync()
   .then((res) => {
-    console.log("after db", res);
+    console.log("Table synced", res);
   })
-  .catch((err) => console.log("error on db creation", err));
+  .catch((err) => console.log("error on table creation", err));
 app.use(errorHandler);
 
 const port = process.env.PORT;
 var server = app.listen(port, () => {
   console.log(`listening on port:${port}`);
-  // connectToDb();
 });
 
 module.exports = server;

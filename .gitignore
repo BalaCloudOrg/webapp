@@ -129,4 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# macos finder's local file
 .DS_Store
+
+# IDE specific files
+jsconfig.json
