@@ -35,9 +35,6 @@ module.exports = (app) => {
   });
 
   app.post("/v1/user", async (req, res, next) => {
-    console.log("auth headers", req.headers.authorization);
-    console.log("reached v1/user/post", req.body);
-
     if (
       req.headers.authorization ||
       Object.keys(req.params).length > 0 ||
@@ -80,7 +77,6 @@ module.exports = (app) => {
   });
 
   app.put("/v1/user/self", auth, async (req, res, next) => {
-    console.log("reached v1/user/ put", req.body);
     if (
       !req.headers.authorization ||
       Object.keys(req.params).length > 0 ||
@@ -91,10 +87,13 @@ module.exports = (app) => {
       return next(ApiError.badRequest());
 
     try {
-      console.log(Object.keys(req.body));
       Object.keys(req.body).forEach(async (element) => {
+        const isPassword = element === "password";
+        let hashedPass;
+        if (isPassword) hashedPass = await bcrypt.hash(req?.body[element], 10);
+
         await User.update(
-          { [element]: req?.body[element] },
+          { [element]: isPassword ? hashedPass : req?.body[element] },
           { where: { username: req?.username } }
         );
       });
@@ -110,8 +109,6 @@ module.exports = (app) => {
   });
 
   app.get("/v1/user/self", auth, async (req, res, next) => {
-    console.log("reached v1/user/ get", req.body);
-
     if (req.method === "HEAD") return next(ApiError.methodNotAllowed());
 
     if (

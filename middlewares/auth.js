@@ -3,7 +3,6 @@ const User = require("../models/user");
 const ApiError = require("../utils/ApiError");
 
 const auth = async (req, res, next) => {
-  console.log("headers", req.headers.authorization);
   if (!req.headers.authorization) return next();
   const authToken = req.headers.authorization;
   const encrypted = authToken.split(" ")[1];
@@ -12,7 +11,6 @@ const auth = async (req, res, next) => {
   const username = fields[0];
   const password = fields[1];
   let isAuthorized;
-  console.log("authorization headers", username, password);
 
   const user = await User.findAll({
     attributes: ["password"],
