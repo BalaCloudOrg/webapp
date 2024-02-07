@@ -6,19 +6,12 @@ on:
       - main
 
 jobs:
-  job1:
-    name: Hello World
+  combined_job:
+    name: Hello World and Install Dependencies
     runs-on: ubuntu-latest
     steps:
-      - name: Echo Hello World
+      - name: Prints Hello World
         run: echo "hello world"
 
-  job2:
-    name: Install Dependencies
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Install Node.js dependencies
-        run: npm install
