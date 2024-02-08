@@ -91,11 +91,15 @@ module.exports = (app) => {
         const isPassword = element === "password";
         let hashedPass;
         if (isPassword) hashedPass = await bcrypt.hash(req?.body[element], 10);
-
-        await User.update(
-          { [element]: isPassword ? hashedPass : req?.body[element] },
-          { where: { username: req?.username } }
-        );
+        try {
+          await User.update(
+            { [element]: isPassword ? hashedPass : req?.body[element] },
+            { where: { username: req?.username } }
+          );
+        } catch (error) {
+          console.log(error);
+          // return next(ApiError.badRequest());
+        }
       });
       await User.update(
         { account_updated: new Date().toISOString() },
