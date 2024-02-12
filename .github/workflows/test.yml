@@ -34,4 +34,9 @@ jobs:
           # mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'$MYSQL_HOST' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot -p$santy@mysql
           # mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'$MYSQL_HOST';" -uroot -p$santy@mysql
           # mysql -e "FLUSH PRIVILEGES;" -uroot -p$santy@mysql
-          mysql -uroot -e "SHOW DATABASES;" && echo "No root password is set." || echo "Root password is set or cannot connect to MySQL."
+          sudo apt-get update
+          sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password santy@mysql'
+          sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password santy@mysql'
+          sudo apt-get install -y mysql-server
+          sudo systemctl start mysql
+          mysql -e "SHOW DATABASES;" -uroot -psanty@mysql && echo "No root password is set." || echo "Root password is set or cannot connect to MySQL."
