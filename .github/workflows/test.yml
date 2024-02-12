@@ -39,4 +39,5 @@ jobs:
           sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password santy@mysql'
           sudo apt-get install -y mysql-server
           sudo systemctl start mysql
-          mysql -h 127.0.0.1 -e "SHOW DATABASES;" -uroot -psanty@mysql
+          mysql -h 127.0.0.1 -uroot -p'santy@mysql' -e "SHOW DATABASES;"
+
