@@ -30,7 +30,8 @@ jobs:
 
       - name: Create and set database
         run: |
-          mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" -uroot -p$santy@mysql
-          mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'$MYSQL_HOST' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot -p$santy@mysql
-          mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'$MYSQL_HOST';" -uroot -p$santy@mysql
-          mysql -e "FLUSH PRIVILEGES;" -uroot -p$santy@mysql
+          # mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" -uroot -p$santy@mysql
+          # mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'$MYSQL_HOST' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot -p$santy@mysql
+          # mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'$MYSQL_HOST';" -uroot -p$santy@mysql
+          # mysql -e "FLUSH PRIVILEGES;" -uroot -p$santy@mysql
+          mysql -uroot -e "SHOW DATABASES;" && echo "No root password is set." || echo "Root password is set or cannot connect to MySQL."
