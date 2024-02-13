@@ -34,14 +34,12 @@ describe("test", () => {
   });
 
   it("checks", async () => {
-    await request(server)
-      .post("/v1/user")
-      .send({
-        first_name: "abcd",
-        last_name: "efgh",
-        password: "mnbv",
-        username: "abc@gnh.com",
-      });
+    await request(server).post("/v1/user").send({
+      first_name: "abcd",
+      last_name: "efgh",
+      password: "mnbv",
+      username: "abc@gnh.com",
+    });
     const token = btoa("abc@gnh.com:mnbv");
     const res = await request(server)
       .get("/v1/user/self")
