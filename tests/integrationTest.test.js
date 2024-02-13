@@ -45,7 +45,7 @@ describe("test", () => {
       .get("/v1/user/self")
       .set("Authorization", `Basic ${token}`);
 
-    // expect(res.status).toBe(401);
+    expect(res.status).toBe(4011);
   });
 
   it("checkss", async () => {
