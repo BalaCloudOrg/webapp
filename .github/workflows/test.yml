@@ -10,7 +10,7 @@ jobs:
     name: Hello World and Install Dependencies
     runs-on: ubuntu-latest
     env:
-      MYSQL_HOST: "localhost"
+      MYSQL_HOST: "127.0.0.1"
       MYSQL_USER: "user1"
       MYSQL_PASSWORD: "Abcd@123"
       MYSQL_DATABASE: "test"
