@@ -5,7 +5,7 @@ const User = require("../models/user");
 describe("test", () => {
   beforeAll(() => {
     const sequelize = new Sequelize(
-      "integration",
+      process.env.MYSQL_DATABASE,
       process.env.MYSQL_USER,
       process.env.MYSQL_PASSWORD,
       { host: process.env.MYSQL_HOST, dialect: "mysql" }
