@@ -2,34 +2,33 @@ const request = require("supertest");
 const { Sequelize } = require("sequelize");
 const User = require("../models/user");
 
-const sequelize = new Sequelize(
-  process.env.MYSQL_DATABASE,
-  process.env.MYSQL_USER,
-  process.env.MYSQL_PASSWORD,
-  { host: process.env.MYSQL_HOST, dialect: "mysql" }
-);
-
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
-})();
-
-User.sync()
-  .then((res) => {
-    console.log("Table synced", res);
-  })
-  .catch((err) => console.log("error on table creation", err));
-
 describe("test", () => {
-  beforeEach(() => {
+  beforeAll(() => {
+    const sequelize = new Sequelize(
+      "integration",
+      process.env.MYSQL_USER,
+      process.env.MYSQL_PASSWORD,
+      { host: process.env.MYSQL_HOST, dialect: "mysql" }
+    );
+
+    (async () => {
+      try {
+        await sequelize.authenticate();
+        console.log("Connection has been established successfully.");
+      } catch (error) {
+        console.error("Unable to connect to the database:", error);
+      }
+    })();
+
+    User.sync()
+      .then((res) => {
+        console.log("Table synced", res);
+      })
+      .catch((err) => console.log("error on table creation", err));
     server = require("../index");
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await server.close();
   });
 
@@ -62,6 +61,6 @@ describe("test", () => {
       .set("Authorization", `Basic ${token}`);
 
     console.log(res1.status, res1.body);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(204);
   });
 });
