@@ -44,8 +44,8 @@ describe("test", () => {
     const res = await request(server)
       .get("/v1/user/self")
       .set("Authorization", `Basic ${token}`);
-
-    expect(res.status).toBe(4011);
+    console.log(res.body);
+    expect(res.status).toBe(200);
   });
 
   it("checkss", async () => {
@@ -55,15 +55,13 @@ describe("test", () => {
       .set("Authorization", `Basic ${token}`)
       .send({ first_name: "changed", last_name: "last" });
 
-    setTimeout(() => {
-      console.log("first", res.status, res.body);
-    }, 1000);
+    console.log("first", res.status);
 
     const res1 = await request(server)
       .get("/v1/user/self")
       .set("Authorization", `Basic ${token}`);
 
     console.log(res1.status, res1.body);
-    // expect(res.status).toBe(401);
+    expect(res.status).toBe(200);
   });
 });
