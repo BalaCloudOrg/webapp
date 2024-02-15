@@ -7,7 +7,7 @@ on:
 
 jobs:
   combined_job:
-    name: Hello World and Install Dependencies
+    name: Install API Dependencies and setup MySQL
     runs-on: ubuntu-latest
     env:
       PORT: "3000"
@@ -17,27 +17,24 @@ jobs:
       MYSQL_DATABASE: "test"
 
     steps:
-      - name: Prints Hello World
-        run: echo "hello world"
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
-
-      # - name: Install API dependencies
-      #   run: npm ci
+      - name: Install API dependencies
+        run: npm ci
 
       - name: Start mysql
         run: sudo /etc/init.d/mysql start
 
       - name: Create and set database
         run: |
-          mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" -uroot -proot
-          mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot -proot
-          mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'localhost';" -uroot -proot
-          mysql -e "FLUSH PRIVILEGES;" -uroot -proot
+          mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
+          mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
+          mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'localhost';" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
+          mysql -e "FLUSH PRIVILEGES;" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
 
       - name: Run integration tests
         run: npm run test
 
       - name: Delete the Database
-        run: mysql -e "DROP DATABASE $MYSQL_DATABASE;" -uroot -proot
+        run: mysql -e "DROP DATABASE $MYSQL_DATABASE;" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
