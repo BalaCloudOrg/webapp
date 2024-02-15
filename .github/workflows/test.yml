@@ -38,3 +38,6 @@ jobs:
 
       - name: Run integration tests
         run: npm run test
+
+      - name: Delete the Database
+        run: mysql -e "DELETE DATABASE $MYSQL_DATABASE;" -uroot -proot
