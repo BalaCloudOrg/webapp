@@ -13,7 +13,7 @@ const validatePostPayload = (body) => {
   return !isMissingField && !hasExtraFields;
 };
 
-const validatePutRequestBody = (body) => {
+const validatePutPayload = (body) => {
   if (!body) return false;
 
   const allowedFields = ["first_name", "last_name", "password"];
@@ -27,4 +27,16 @@ const validatePutRequestBody = (body) => {
   return isValid;
 };
 
-module.exports = { validatePostPayload, validatePutRequestBody };
+const validatePayloadValues = (body) => {
+  let result = false;
+  Object.keys(body).forEach((element) => {
+    if (body.hasOwnProperty(element) && body[element] === "") result = true;
+  });
+  return result;
+};
+
+module.exports = {
+  validatePostPayload,
+  validatePutPayload,
+  validatePayloadValues,
+};

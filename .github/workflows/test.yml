@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install node dependencies
+      - name: Install API dependencies
         run: npm ci
 
       - name: Start mysql
