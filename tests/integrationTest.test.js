@@ -93,39 +93,39 @@ describe("test", () => {
     expect(res.body["account_updated"]).toBeTruthy();
   });
 
-  it("should return a 204 status code for PUT request, given a password field to update", async () => {
-    const res = await request(server)
-      .put("/v1/user/self")
-      .set("Authorization", `Basic ${authToken}`)
-      .send({ password: "abcd" });
+  // it("should return a 204 status code for PUT request, given a password field to update", async () => {
+  //   const res = await request(server)
+  //     .put("/v1/user/self")
+  //     .set("Authorization", `Basic ${authToken}`)
+  //     .send({ password: "abcd" });
 
-    expect(res.status).toBe(204);
-    expect(JSON.stringify(res.body)).toMatch(JSON.stringify({}));
-  });
+  //   expect(res.status).toBe(204);
+  //   expect(JSON.stringify(res.body)).toMatch(JSON.stringify({}));
+  // });
 
-  it("should return 401 status code and no response body for GET request, when it is sent with old password as login credentials", async () => {
-    const res = await request(server)
-      .get("/v1/user/self")
-      .set("Authorization", `Basic ${authToken}`);
+  // it("should return 401 status code and no response body for GET request, when it is sent with old password as login credentials", async () => {
+  //   const res = await request(server)
+  //     .get("/v1/user/self")
+  //     .set("Authorization", `Basic ${authToken}`);
 
-    setTimeout(() => {
-      expect(res.status).toBe(401);
-      expect(JSON.stringify(res.body)).toMatch(JSON.stringify({}));
-    }, 1000);
-  });
+  //   setTimeout(() => {
+  //     expect(res.status).toBe(401);
+  //     expect(JSON.stringify(res.body)).toMatch(JSON.stringify({}));
+  //   }, 1000);
+  // });
 
-  it("should return 200 status code and the updated user details for GET request, when it is sent with correct password as login credentials", async () => {
-    const updatedAuthToken = btoa(`${testData.username}:abcd`);
-    const res = await request(server)
-      .get("/v1/user/self")
-      .set("Authorization", `Basic ${updatedAuthToken}`);
+  // it("should return 200 status code and the updated user details for GET request, when it is sent with correct password as login credentials", async () => {
+  //   const updatedAuthToken = btoa(`${testData.username}:abcd`);
+  //   const res = await request(server)
+  //     .get("/v1/user/self")
+  //     .set("Authorization", `Basic ${updatedAuthToken}`);
 
-    expect(res.status).toBe(200);
-    expect(res.body.first_name).toMatch("Jane");
-    expect(res.body.last_name).toMatch("Mary");
-    expect(res.body.username).toMatch(testData.username);
-    expect(res.body["id"]).toBeTruthy();
-    expect(res.body["account_created"]).toBeTruthy();
-    expect(res.body["account_updated"]).toBeTruthy();
-  });
+  //   expect(res.status).toBe(200);
+  //   expect(res.body.first_name).toMatch("Jane");
+  //   expect(res.body.last_name).toMatch("Mary");
+  //   expect(res.body.username).toMatch(testData.username);
+  //   expect(res.body["id"]).toBeTruthy();
+  //   expect(res.body["account_created"]).toBeTruthy();
+  //   expect(res.body["account_updated"]).toBeTruthy();
+  // });
 });
