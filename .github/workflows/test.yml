@@ -40,4 +40,4 @@ jobs:
         run: npm run test
 
       - name: Delete the Database
-        run: mysql -e "DELETE DATABASE $MYSQL_DATABASE;" -uroot -proot
+        run: mysql -e "DROP DATABASE $MYSQL_DATABASE;" -uroot -proot
