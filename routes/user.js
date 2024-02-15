@@ -4,7 +4,6 @@ const router = express.Router();
 const ApiError = require("../utils/ApiError");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const auth = require("../middlewares/auth");
 const {
   validatePostPayload,
   validatePayloadValues,

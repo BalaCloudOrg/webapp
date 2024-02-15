@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  combined_job:
+    name: Hello World and Install Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prints Hello World
+        run: echo "hello world"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install API dependencies
+        run: npm ci

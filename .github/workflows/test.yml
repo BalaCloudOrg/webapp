@@ -1,4 +1,4 @@
-name: CI
+name: Integration test
 
 on:
   pull_request:
@@ -20,11 +20,11 @@ jobs:
       - name: Prints Hello World
         run: echo "hello world"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
 
-      - name: Install API dependencies
-        run: npm ci
+      # - name: Install API dependencies
+      #   run: npm ci
 
       - name: Start mysql
         run: sudo /etc/init.d/mysql start
