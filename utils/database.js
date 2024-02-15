@@ -4,7 +4,9 @@ const { Sequelize } = require("sequelize");
 
 const connectToDb = async (res, next) => {
   const sequelize = new Sequelize(
-    process.env.MYSQL_DATABASE,
+    process.env.ENVIRONMENT
+      ? process.env.MYSQL_DATABASE_TEST
+      : process.env.MYSQL_DATABASE,
     process.env.MYSQL_USER,
     process.env.MYSQL_PASSWORD,
     { host: process.env.MYSQL_HOST, dialect: "mysql" }
@@ -13,7 +15,7 @@ const connectToDb = async (res, next) => {
   try {
     await sequelize.authenticate();
     console.log("connection exists");
-    return res.sendStatus(200);
+    return res.status(200).end();
   } catch (error) {
     console.log(error);
     return next(ApiError.serviceUnavailable());
@@ -23,7 +25,9 @@ const connectToDb = async (res, next) => {
 };
 
 const sequelize = new Sequelize(
-  process.env.MYSQL_DATABASE,
+  process.env.ENVIRONMENT
+    ? process.env.MYSQL_DATABASE_TEST
+    : process.env.MYSQL_DATABASE,
   process.env.MYSQL_USER,
   process.env.MYSQL_PASSWORD,
   { host: process.env.MYSQL_HOST, dialect: "mysql" }
