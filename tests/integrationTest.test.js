@@ -12,7 +12,7 @@ describe("test", () => {
   const authToken = btoa(`${testData.username}:${testData.password}`);
   let res;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     const sequelize = new Sequelize(
       process.env.MYSQL_DATABASE,
       process.env.MYSQL_USER,
@@ -29,7 +29,7 @@ describe("test", () => {
       }
     })();
 
-    User.sync()
+    await User.sync()
       .then((res) => {
         console.log("Table synced", res);
       })
