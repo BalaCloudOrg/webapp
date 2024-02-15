@@ -15,6 +15,7 @@ jobs:
       MYSQL_USER: "user1"
       MYSQL_PASSWORD: "Abcd@123"
       MYSQL_DATABASE: "test"
+      MYSQL_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -28,13 +29,13 @@ jobs:
 
       - name: Create and set database
         run: |
-          mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
-          mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
-          mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'localhost';" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
-          mysql -e "FLUSH PRIVILEGES;" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
+          mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" -uroot
+          mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';" -uroot
+          mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'localhost';" -uroot
+          mysql -e "FLUSH PRIVILEGES;" -uroot
 
       - name: Run integration tests
         run: npm run test
 
       - name: Delete the Database
-        run: mysql -e "DROP DATABASE $MYSQL_DATABASE;" -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }}
+        run: mysql -e "DROP DATABASE $MYSQL_DATABASE;" -uroot
