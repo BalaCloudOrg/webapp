@@ -4,9 +4,7 @@ const { Sequelize } = require("sequelize");
 
 const connectToDb = async (res, next) => {
   const sequelize = new Sequelize(
-    process.env.ENVIRONMENT
-      ? process.env.MYSQL_DATABASE_TEST
-      : process.env.MYSQL_DATABASE,
+    process.env.MYSQL_DATABASE,
     process.env.MYSQL_USER,
     process.env.MYSQL_PASSWORD,
     { host: process.env.MYSQL_HOST, dialect: "mysql" }
@@ -25,9 +23,7 @@ const connectToDb = async (res, next) => {
 };
 
 const sequelize = new Sequelize(
-  process.env.ENVIRONMENT
-    ? process.env.MYSQL_DATABASE_TEST
-    : process.env.MYSQL_DATABASE,
+  process.env.MYSQL_DATABASE,
   process.env.MYSQL_USER,
   process.env.MYSQL_PASSWORD,
   { host: process.env.MYSQL_HOST, dialect: "mysql" }

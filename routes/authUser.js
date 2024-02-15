@@ -7,7 +7,7 @@ const User = require("../models/user");
 const auth = require("../middlewares/auth");
 const {
   validatePutPayload,
-  validatePutRequestValues,
+  validatePayloadValues,
 } = require("../utils/helper");
 
 router.put("/", auth, async (req, res, next) => {
