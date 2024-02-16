@@ -1,12 +1,5 @@
 const express = require("express");
 
-const bcrypt = require("bcrypt");
-
-const ApiError = require("../utils/ApiError");
-const { connectToDb, sequelize } = require("../utils/database");
-const auth = require("../middlewares/auth");
-const { validatePostPayload, validatePutPayload } = require("../utils/helper");
-const User = require("../models/user");
 const healthCheck = require("../routes/healthCheck");
 const user = require("../routes/user");
 const authUser = require("../routes/authUser");

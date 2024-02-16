@@ -22,21 +22,23 @@ router.put("/", auth, async (req, res, next) => {
 
   if (validatePayloadValues(req.body)) return next(ApiError.badRequest());
 
+  const updateOperations = Object.keys(req.body).map(async (element) => {
+    const isPassword = element === "password";
+    let hashedPass;
+    if (isPassword) hashedPass = await bcrypt.hash(req?.body[element], 10);
+    try {
+      await User.update(
+        { [element]: isPassword ? hashedPass : req?.body[element] },
+        { where: { username: req?.username } }
+      );
+    } catch (error) {
+      console.log(error);
+      return next(ApiError.badRequest());
+    }
+  });
+
   try {
-    Object.keys(req.body).forEach(async (element) => {
-      const isPassword = element === "password";
-      let hashedPass;
-      if (isPassword) hashedPass = await bcrypt.hash(req?.body[element], 10);
-      try {
-        await User.update(
-          { [element]: isPassword ? hashedPass : req?.body[element] },
-          { where: { username: req?.username } }
-        );
-      } catch (error) {
-        console.log(error);
-        return next(ApiError.badRequest());
-      }
-    });
+    await Promise.all(updateOperations);
     await User.update(
       { account_updated: new Date().toISOString() },
       { where: { username: req?.username } }
