@@ -12,7 +12,7 @@ describe("test", () => {
   const authToken = btoa(`${testData.username}:${testData.password}`);
   let res;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     const sequelize = new Sequelize(
       process.env.MYSQL_DATABASE,
       process.env.MYSQL_USER,
@@ -20,7 +20,7 @@ describe("test", () => {
       { host: process.env.MYSQL_HOST, dialect: "mysql" }
     );
 
-    (async () => {
+    await (async () => {
       try {
         await sequelize.authenticate();
         console.log("Connection has been established successfully.");
@@ -29,11 +29,14 @@ describe("test", () => {
       }
     })();
 
-    User.sync()
-      .then((res) => {
-        console.log("Table synced", res);
-      })
-      .catch((err) => console.log("error on table creation", err));
+    try {
+      await User.sync();
+      console.log("Table synced", res);
+    } catch (error) {
+      console.log("error on table creation", err);
+    }
+    // .then((res) => {
+    // })
 
     server = require("../index");
   });
