@@ -20,7 +20,7 @@ describe("test", () => {
       { host: process.env.MYSQL_HOST, dialect: "mysql" }
     );
 
-    await (async () => {
+    (async () => {
       try {
         await sequelize.authenticate();
         console.log("Connection has been established successfully.");
@@ -29,14 +29,11 @@ describe("test", () => {
       }
     })();
 
-    try {
-      await User.sync();
-      console.log("Table synced", res);
-    } catch (error) {
-      console.log("error on table creation", err);
-    }
-    // .then((res) => {
-    // })
+    await User.sync()
+      .then((res) => {
+        console.log("Table synced", res);
+      })
+      .catch((err) => console.log("error on table creation", err));
 
     server = require("../index");
   });
