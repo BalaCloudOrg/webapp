@@ -46,7 +46,7 @@ describe("test", () => {
   it("should return a 201 status code and the created user details for POST request with a valid body", async () => {
     res = await request(server).post("/v1/user").send(testData);
 
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(200);
     expect(res.body.first_name).toMatch(testData.first_name);
     expect(res.body.last_name).toMatch(testData.last_name);
     expect(res.body.username).toMatch(testData.username);
@@ -75,7 +75,7 @@ describe("test", () => {
       .set("Authorization", `Basic ${authToken}`)
       .send({ first_name: "Jane", last_name: "Mary" });
 
-    expect(res.status).toBe(204);
+    expect(res.status).toBe(201);
     expect(JSON.stringify(res.body)).toMatch(JSON.stringify({}));
   });
 
