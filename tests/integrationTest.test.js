@@ -47,7 +47,7 @@ describe("test", () => {
     res = await request(server).post("/v1/user").send(testData);
 
     expect(res.status).toBe(201);
-    expect(res.body.first_name).toMatch(testData.first_name);
+    expect(res.body.first_name).toMatch(testData.first_name + "df");
     expect(res.body.last_name).toMatch(testData.last_name);
     expect(res.body.username).toMatch(testData.username);
     expect(res.body["id"]).toBeTruthy();
