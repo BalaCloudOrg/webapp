@@ -1,11 +1,34 @@
 variable "project_id" {
-  type    = string
-  default = "webapp-infra"
+  type        = string
+  description = "The project id where the custom image will be placed"
+  default     = "webapp-infra"
 }
 
 variable "zone" {
   type    = string
   default = "us-east1-b"
+}
+
+variable "source_image_family" {
+  type        = string
+  description = "The OS of the custom image"
+  default     = "centos-stream-8"
+}
+
+variable "ssh_user" {
+  type    = string
+  default = "gcp-user"
+}
+
+variable "image_name" {
+  type        = string
+  description = "The name of the custom image"
+  default     = "dev-centos-stream8-image-v6-from-ci"
+}
+
+variable "build_source" {
+  type    = string
+  default = "source.googlecompute.centos_stream_8"
 }
 
 packer {
@@ -20,24 +43,14 @@ packer {
 source "googlecompute" "centos_stream_8" {
   project_id          = var.project_id
   zone                = var.zone
-  source_image_family = "centos-stream-8"
-  // source_image            = "centos-stream-8-v20230509"
-  ssh_username = "gcp-user"
-  image_name   = "dev-centos-stream8-image-v6-from-ci"
+  source_image_family = var.source_image_family
+  ssh_username        = var.ssh_user
+  image_name          = var.image_name
 }
 
-// source "googlecompute" "centos8-stream" {
-//   project_id   = "terraform-project"
-//   source_image = "centos-stream-8-v20230509"
-//   image_name   = "dev-centos-stream8-image"
-//   ssh_username = "gcp-user"
-//   zone         = "us-central1-a"
-// }
 
 build {
-  sources = [
-    "source.googlecompute.centos_stream_8",
-  ]
+  sources = [var.build_source]
 
   provisioner "file" {
     source      = "../../test-src.zip"
