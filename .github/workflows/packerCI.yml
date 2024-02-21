@@ -32,6 +32,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Zip application code
+        run: zip -r test-src.zip .
+
       - name: Packer init - get plugins
         run: packer init .
         working-directory: "./packer/templates"
@@ -40,8 +43,11 @@ jobs:
         run: packer validate .
         working-directory: "./packer/templates"
 
+      - name: Clear up the application zip file
+        run: rm -rf test-src.zip
+
   packer-build:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
