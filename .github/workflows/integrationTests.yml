@@ -1,11 +1,13 @@
 name: integrationTestsCI
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   integration_tests:
-    name: Integration_tests job
+    name: Integration tests job
     runs-on: ubuntu-latest
     env:
       PORT: "3000"

@@ -1,11 +1,13 @@
 name: packerCI
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   print:
-    name: print job
+    name: packer CI - Print job
     runs-on: ubuntu-latest
 
     steps:
