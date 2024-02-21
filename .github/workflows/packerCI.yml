@@ -68,9 +68,9 @@ jobs:
         run: |
           echo "build packer image"
           cd ../../
-          echo ${pwd}
+          echo "$(pwd)"
           ls
           echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          echo ${GOOGLE_APPLICATION_CREDENTIALS}
+          echo "$GOOGLE_APPLICATION_CREDENTIALS"
           echo ${{ secrets.MYSQL_ROOT_PASSWORD }}
         working-directory: "./packer/templates"
