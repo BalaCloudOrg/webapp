@@ -14,11 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      #   - name: Setup Packer
-      #     uses: hashicorp/setup-packer@v1.0.4
-      #     with:
-      #       packer-version: "1.7.0"
-
       - name: Verifies the format of Packer files
         run: |
           if packer fmt -check .; then
@@ -37,8 +32,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      #   - name: Setup Packer
-      #     uses: hashicorp/setup-packer@v1.0.4
+      - name: Packer init - get plugins
+        run: packer init .
+        working-directory: "./packer/templates"
 
       - name: Validate Packer template
         run: packer validate .
