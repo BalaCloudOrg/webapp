@@ -41,8 +41,11 @@ jobs:
     #     working-directory: "./packer/templates"
 
   packer-build:
-    if: github.event_name == 'push'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -50,13 +53,23 @@ jobs:
       - name: Zip application code
         run: zip -r test-src.zip .
 
-      #   - name: Setup Packer
-      #     uses: hashicorp/setup-packer@v1.0.4
+      - name: "GCloud auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
+
+      - name: "Set up GCloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
+
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
 
       - name: Build Packer image
         run: |
           echo "build packer image"
           cd ../../
-          echo $pwd
-          echo ls
+          echo ${pwd}
+          ls
+          echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          echo ${GOOGLE_APPLICATION_CREDENTIALS}
         working-directory: "./packer/templates"
