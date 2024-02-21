@@ -19,7 +19,7 @@ jobs:
           if packer fmt -check .; then
               echo "All files are correctly formatted."
           else
-              echo "::error::Packer f   iles need to be formatted."
+              echo "::error::Packer files need to be formatted."
               exit 1
           fi
         working-directory: "./packer/templates"
