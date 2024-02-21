@@ -41,7 +41,7 @@ build {
 
   provisioner "file" {
     source      = "/Users/santhosh/Downloads/test-src.zip"
-    destination = "/tmp/"
+    destination     = "/tmp/"
   }
 
   provisioner "file" {
