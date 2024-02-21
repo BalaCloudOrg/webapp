@@ -61,8 +61,9 @@ jobs:
       - name: "Set up GCloud SDK"
         uses: "google-github-actions/setup-gcloud@v2"
 
-      - name: "Use gcloud CLI"
-        run: "gcloud info"
+      - name: Packer init - get plugins
+        run: packer init .
+        working-directory: "./packer/templates"
 
       - name: Build Packer image
         run: packer build template.pkr.hcl
