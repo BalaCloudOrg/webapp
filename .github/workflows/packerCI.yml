@@ -2,14 +2,65 @@ name: packerCI
 
 on:
   pull_request:
+  push:
     branches:
       - main
 
 jobs:
-  print:
-    name: packer CI - Print job
+  packer-format:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-
     steps:
-      - name: Prints packer CI
-        run: echo "packer CI"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      #   - name: Setup Packer
+      #     uses: hashicorp/setup-packer@v1.0.4
+      #     with:
+      #       packer-version: "1.7.0"
+
+      - name: Verifies the format of Packer files
+        run: |
+          if packer fmt -check .; then
+              echo "All files are correctly formatted."
+          else
+              echo "::error::Packer files need to be formatted."
+              exit 1
+          fi
+        working-directory: "./packer/templates"
+
+  packer-validate:
+    if: github.event_name == 'pull_request'
+    needs: [packer-format]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      #   - name: Setup Packer
+      #     uses: hashicorp/setup-packer@v1.0.4
+
+      - name: Validate Packer template
+        run: packer validate .
+        working-directory: "./packer/templates"
+
+  packer-build:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Zip application code
+        run: zip -r test-src.zip .
+
+      #   - name: Setup Packer
+      #     uses: hashicorp/setup-packer@v1.0.4
+
+      - name: Build Packer image
+        run: |
+          echo "build packer image"
+          cd ../../
+          echo $pwd
+          echo ls
+        working-directory: "./packer/templates"
