@@ -71,6 +71,6 @@ jobs:
           echo "$(pwd)"
           ls
           echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          echo ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ env.GOOGLE_APPLICATION_CREDENTIALS }}"
           echo ${{ secrets.MYSQL_ROOT_PASSWORD }}
         working-directory: "./packer/templates"
