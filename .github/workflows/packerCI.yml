@@ -72,4 +72,5 @@ jobs:
           ls
           echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           echo ${GOOGLE_APPLICATION_CREDENTIALS}
+          echo ${{ secrets.MYSQL_ROOT_PASSWORD }}
         working-directory: "./packer/templates"
