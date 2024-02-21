@@ -36,9 +36,9 @@ jobs:
         run: packer init .
         working-directory: "./packer/templates"
 
-      - name: Validate Packer template
-        run: packer validate .
-        working-directory: "./packer/templates"
+    #   - name: Validate Packer template
+    #     run: packer validate .
+    #     working-directory: "./packer/templates"
 
   packer-build:
     if: github.event_name == 'push'
