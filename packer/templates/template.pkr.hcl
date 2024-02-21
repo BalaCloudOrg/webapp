@@ -23,12 +23,17 @@ variable "ssh_user" {
 variable "image_name" {
   type        = string
   description = "The name of the custom image"
-  default     = "dev-centos-stream8-image-v6-from-ci"
+  default     = "dev-centos-stream8-image"
 }
 
 variable "build_source" {
   type    = string
   default = "source.googlecompute.centos_stream_8"
+}
+
+variable "image_family" {
+  type    = string
+  default = "centos-custom-image"
 }
 
 packer {
@@ -46,6 +51,7 @@ source "googlecompute" "centos_stream_8" {
   source_image_family = var.source_image_family
   ssh_username        = var.ssh_user
   image_name          = var.image_name
+  image_family        = var.image_family
 }
 
 

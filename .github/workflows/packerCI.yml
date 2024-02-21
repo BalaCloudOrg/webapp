@@ -19,7 +19,7 @@ jobs:
           if packer fmt -check .; then
               echo "All files are correctly formatted."
           else
-              echo "::error::Packer files need to be formatted."
+              echo "::error::Packer f   iles need to be formatted."
               exit 1
           fi
         working-directory: "./packer/templates"
@@ -71,6 +71,9 @@ jobs:
         run: packer init .
         working-directory: "./packer/templates"
 
+      - name: Prepare environment variables
+        run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
       - name: Build Packer image
-        run: packer build template.pkr.hcl
+        run: packer build -var "project_id=${{ secrets.GCP_PROJECT_ID }}" -var "image_name=dev-centos-stream8-image-${{ env.TIMESTAMP }}" template.pkr.hcl
         working-directory: "./packer/templates"
