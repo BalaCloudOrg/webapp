@@ -23,7 +23,7 @@ source "googlecompute" "centos_stream_8" {
   source_image_family = "centos-stream-8"
   // source_image            = "centos-stream-8-v20230509"
   ssh_username = "gcp-user"
-  image_name   = "dev-centos-stream8-image-v5-from-CI"
+  image_name   = "dev-centos-stream8-image-v5-from-ci"
 }
 
 // source "googlecompute" "centos8-stream" {
