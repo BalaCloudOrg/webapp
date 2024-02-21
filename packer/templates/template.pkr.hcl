@@ -23,7 +23,7 @@ source "googlecompute" "centos_stream_8" {
   source_image_family = "centos-stream-8"
   // source_image            = "centos-stream-8-v20230509"
   ssh_username = "gcp-user"
-  image_name   = "dev-centos-stream8-image-v4-sh"
+  image_name   = "dev-centos-stream8-image-v5-from-CI"
 }
 
 // source "googlecompute" "centos8-stream" {
@@ -40,7 +40,7 @@ build {
   ]
 
   provisioner "file" {
-    source      = "/Users/santhosh/Downloads/test-src.zip"
+    source      = "../../test-src.zip"
     destination = "/tmp/"
   }
 

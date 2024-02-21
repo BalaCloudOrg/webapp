@@ -36,9 +36,9 @@ jobs:
         run: packer init .
         working-directory: "./packer/templates"
 
-    #   - name: Validate Packer template
-    #     run: packer validate .
-    #     working-directory: "./packer/templates"
+      - name: Validate Packer template
+        run: packer validate .
+        working-directory: "./packer/templates"
 
   packer-build:
     if: github.event_name == 'pull_request'
@@ -65,11 +65,5 @@ jobs:
         run: "gcloud info"
 
       - name: Build Packer image
-        run: |
-          echo "build packer image"
-          cd ../../
-          echo "$(pwd)"
-          ls
-          echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          echo ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        run: packer build template.pkr.hcl
         working-directory: "./packer/templates"
