@@ -1,11 +1,13 @@
 name: sampleCI
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   print:
-    name: Print job
+    name: sample CI - print job
     runs-on: ubuntu-latest
 
     steps:
