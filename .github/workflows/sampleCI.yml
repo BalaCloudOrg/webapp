@@ -1,0 +1,13 @@
+name: sampleCI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  print:
+    name: Print job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prints Hello World
+        run: echo "hello world"

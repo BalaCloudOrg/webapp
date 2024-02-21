@@ -1,0 +1,13 @@
+name: packerCI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  print:
+    name: print job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prints packer CI
+        run: echo "packer CI"
