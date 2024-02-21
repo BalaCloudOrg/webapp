@@ -1,6 +1,6 @@
 const express = require("express");
 const { Sequelize } = require("sequelize");
-const i = require("./packer/templates");
+
 const app = express();
 
 const { connectToDb, sequelize } = require("./utils/database");
