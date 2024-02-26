@@ -5,7 +5,7 @@ variable "project_id" {
 }
 
 variable "zone" {
-  type    = string
+  type    = strin
   default = "us-east1-b"
 }
 
