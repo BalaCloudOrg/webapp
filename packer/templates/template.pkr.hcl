@@ -6,7 +6,7 @@ variable "project_id" {
 
 variable "zone" {
   type    = string
-  default = "us-east1-b"
+        default = "us-east1-b"
 }
 
 variable "source_image_family" {
