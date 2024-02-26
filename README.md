@@ -7,4 +7,4 @@ Steps to build and deploy the app, locally:
 
 To test
 - npm run test
- 
+- test
