@@ -10,7 +10,7 @@ variable "zone" {
 }
 
 variable "source_image_family" {
-  type        = str
+  type        = string
   description = "The OS of the custom image"
   default     = "centos-stream-8"
 }
@@ -39,7 +39,7 @@ variable "image_family" {
 packer {
   required_plugins {
     googlecompute = {
-      source  = "github.com/hashicorp/googlecompute"
+      source  = "github.com/hashicorp/googlte"
       version = "~> 1"
     }
   }
