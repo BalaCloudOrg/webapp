@@ -6,11 +6,11 @@ variable "project_id" {
 
 variable "zone" {
   type    = string
-        default = "us-east1-b"
+  default = "us-east1-b"
 }
 
 variable "source_image_family" {
-  type        = string
+  type        = str
   description = "The OS of the custom image"
   default     = "centos-stream-8"
 }
