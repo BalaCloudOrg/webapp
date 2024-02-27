@@ -74,22 +74,4 @@ build {
       "sudo /opt/image-setup-script.sh"
     ]
   }
-
-  provisioner "shell" {
-    inline = [
-      "source ~/.bashrc"
-    ]
-  }
-
-  provisioner "file" {
-    source      = "../scripts/app-start-script.sh"
-    destination = "/opt/app-start-script.sh"
-  }
-
-  provisioner "shell" {
-    inline = [
-      "chmod +x /opt/app-start-script.sh",
-      "sudo /opt/app-start-script.sh"
-    ]
-  }
 }  
