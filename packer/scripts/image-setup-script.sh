@@ -7,36 +7,36 @@ set -e
 sudo dnf update -y
 
 # 2. Install the mysql-server
-echo "y" | sudo dnf install mysql-server
+# echo "y" | sudo dnf install mysql-server
 
 # 3. Start the mysql service
-sudo systemctl start mysqld.service
+# sudo systemctl start mysqld.service
 
 # 4. Check the status of the mysql service
-sudo systemctl status mysqld
+# sudo systemctl status mysqld
 
 # 5. Verify mysql command execution as root user
-mysqladmin -u root version
+# mysqladmin -u root version
 
 # 6. MYSQL setup
-mysql -u root <<EOF
-CREATE DATABASE IF NOT EXISTS test;
-CREATE USER 'user1'@'localhost' IDENTIFIED BY 'Abcd@123';
-GRANT ALL PRIVILEGES ON test.* TO 'user1'@'localhost';
-FLUSH PRIVILEGES;
-EOF
+# mysql -u root <<EOF
+# CREATE DATABASE IF NOT EXISTS test;
+# CREATE USER 'user1'@'localhost' IDENTIFIED BY 'Abcd@123';
+# GRANT ALL PRIVILEGES ON test.* TO 'user1'@'localhost';
+# FLUSH PRIVILEGES;
+# EOF
 
 
 # 7. Set environment variables in .bashrc
-cat << EOF >> ~/.bashrc
+# cat << EOF >> ~/.bashrc
 
 # config for webapp
-export PORT="3000"
-export MYSQL_HOST="localhost"
-export MYSQL_USER="user1"
-export MYSQL_PASSWORD="Abcd@123"
-export MYSQL_DATABASE="test"
-EOF
+# export PORT="3000"
+# export MYSQL_HOST="localhost"
+# export MYSQL_USER="user1"
+# export MYSQL_PASSWORD="Abcd@123"
+# export MYSQL_DATABASE="test"
+# EOF
 
 # 8. Source .bashrc (Note: Sourcing in a script will not affect the parent shell)
 # source ~/.bashrc
