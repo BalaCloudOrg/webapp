@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # enable mysql service on start
-sudo systemctl enable mysqld
+# sudo systemctl enable mysqld
 
 # install unzip
 sudo dnf install -y unzip
@@ -12,10 +12,10 @@ sudo groupadd csye6225
 sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
 
 # 2. Unzip the application code
-sudo unzip /tmp/test-src.zip -d /tmp/test-src
+sudo unzip /opt/test-src.zip -d /opt/test-src
 
 # Navigate into the folder and install dependencies
-cd /tmp/test-src
+cd /opt/test-src
 npm i || true
 echo "completed npm i"
 npm i bcrypt
@@ -25,33 +25,39 @@ echo "completed npm i brcrypt"
 cd ~
 
 # 4. Change ownership and set executable permissions
-sudo chown -R csye6225:csye6225 /tmp/test-src
+sudo chown -R csye6225:csye6225 /opt/test-src
+
+sudo chown -R csye6225:csye6225 /opt/test-src.zip
+
+sudo chown -R csye6225:csye6225 /opt/config.env
 
 # Setting executable permissions
 # For directories: grant read, write, and execute permissions to user and group
 # For files: grant read and execute permissions to user and group
-sudo find /tmp/test-src -type d -exec chmod 750 {} \;
-# sudo find /tmp/test-src -type f -exec chmod 640 {} \;
+sudo find /opt/test-src -type d -exec chmod 750 {} \;
+# sudo find /opt/test-src -type f -exec chmod 640 {} \;
 
 # If you also want to ensure that all files are executable by the user and group, change the file permission line to:
-sudo find /tmp/test-src -type f -exec chmod 750 {} \;
+sudo find /opt/test-src -type f -exec chmod 750 {} \;
 
 # 5. Create the systemd service file
+# Environment=MYSQL_HOST="localhost"
+# Environment=MYSQL_USER="user1"
+# Environment=MYSQL_PASSWORD="Abcd@123"
+# Environment=MYSQL_DATABASE="test"
 sudo tee /etc/systemd/system/webapp-service.service << 'EOF'
 [Unit]
 Description=CSYE 6225 App
+ConditionPathExists=/opt/config.env
 After=network.target
 
 [Service]
 Environment=PORT="3000"
-Environment=MYSQL_HOST="localhost"
-Environment=MYSQL_USER="user1"
-Environment=MYSQL_PASSWORD="Abcd@123"
-Environment=MYSQL_DATABASE="test"
+EnvironmentFile=/opt/config.env
 Type=simple
 User=csye6225
 Group=csye6225
-WorkingDirectory=/tmp/test-src/
+WorkingDirectory=/opt/test-src/
 ExecStart=/usr/bin/node index.js
 Restart=always
 RestartSec=3
