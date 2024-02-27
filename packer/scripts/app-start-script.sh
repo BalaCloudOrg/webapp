@@ -48,8 +48,8 @@ sudo find /opt/test-src -type f -exec chmod 750 {} \;
 sudo tee /etc/systemd/system/webapp-service.service << 'EOF'
 [Unit]
 Description=CSYE 6225 App
+After=network.target google-startup-scripts.service
 ConditionPathExists=/opt/config.env
-After=network.target
 
 [Service]
 Environment=PORT="3000"
