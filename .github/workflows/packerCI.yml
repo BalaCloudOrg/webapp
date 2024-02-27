@@ -18,6 +18,9 @@ jobs:
         run: packer fmt -check .
         working-directory: "./packer/templates"
 
+      - name: Zip application code
+        run: zip -r test-src.zip .
+
       - name: Packer init - get plugins
         run: packer init .
         working-directory: "./packer/templates"
@@ -25,6 +28,9 @@ jobs:
       - name: Validate Packer template
         run: packer validate .
         working-directory: "./packer/templates"
+
+      - name: Clear up the application zip file
+        run: rm -rf test-src.zip
 
   packer-validate:
     if: github.event_name == 'pull_request'
