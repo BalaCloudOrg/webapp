@@ -12,7 +12,7 @@ sudo groupadd csye6225
 sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
 
 # 2. Unzip the application code
-sudo unzip /opt/test-src.zip -d /opt/test-src
+sudo unzip /tmp/test-src.zip -d /opt/test-src
 
 # Navigate into the folder and install dependencies
 cd /opt/test-src
@@ -27,9 +27,7 @@ cd ~
 # 4. Change ownership and set executable permissions
 sudo chown -R csye6225:csye6225 /opt/test-src
 
-sudo chown -R csye6225:csye6225 /opt/test-src.zip
-
-sudo chown -R csye6225:csye6225 /opt/config.env
+# sudo chown -R csye6225:csye6225 /opt/config.env
 
 # Setting executable permissions
 # For directories: grant read, write, and execute permissions to user and group
