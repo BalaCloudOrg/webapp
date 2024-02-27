@@ -60,18 +60,18 @@ build {
 
   provisioner "file" {
     source      = "../../test-src.zip"
-    destination = "/opt/"
+    destination = "/tmp/"
   }
 
   provisioner "file" {
     source      = "../scripts/image-setup-script.sh"
-    destination = "/opt/image-setup-script.sh"
+    destination = "/tmp/image-setup-script.sh"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /opt/image-setup-script.sh",
-      "sudo /opt/image-setup-script.sh"
+      "chmod +x /tmp/image-setup-script.sh",
+      "sudo /tmp/image-setup-script.sh"
     ]
   }
 }  
