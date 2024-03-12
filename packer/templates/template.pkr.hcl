@@ -9,7 +9,7 @@ variable "zone" {
   default = "us-east1-b"
 }
 
-variable "source_image_famil" {
+variable "source_image_family"  {
   type        = string
   description = "The OS of the custom image"
   default     = "centos-stream-8"
