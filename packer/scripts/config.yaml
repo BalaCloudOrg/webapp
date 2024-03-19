@@ -10,8 +10,16 @@ logging:
       type: parse_json
       time_key: time
       time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
+    set-log-severity:
+      type: set_severity
+      field: jsonPayload.level
+      severity_map:
+        info: INFO
+        debug: DEBUG
+        error: ERROR
+        warn: WARNING
   service:
     pipelines:
       default_pipeline:
         receivers: [my-app-receiver]
-        processors: [my-app-processor]
+        processors: [my-app-processor, set-log-severity]
