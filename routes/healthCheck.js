@@ -1,10 +1,12 @@
 const express = require("express");
+const logger = require("../utils/logging");
 const router = express.Router();
 
 const ApiError = require("../utils/ApiError");
 const { connectToDb } = require("../utils/database");
 
 router.get("/", (req, res, next) => {
+  logger.info("Reached GET route handler for healthz endpoint");
   if (req.method === "HEAD") return next(ApiError.methodNotAllowed());
 
   if (

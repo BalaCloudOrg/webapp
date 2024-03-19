@@ -6,6 +6,7 @@ const app = express();
 const { connectToDb, sequelize } = require("./utils/database");
 const errorHandler = require("./middlewares/errorHandler");
 const User = require("./models/user");
+const logger = require("./utils/logging");
 
 require("./routes/index")(app);
 
@@ -28,6 +29,15 @@ app.use(errorHandler);
 const port = process.env.PORT;
 var server = app.listen(port, () => {
   console.log(`listening on port:${port}`);
+  logger.info(`listening on port:${port}`);
+});
+
+process.on("uncaughtException", (err) => {
+  logger.error(err);
+});
+
+process.on("unhandledRejection", (reason) => {
+  logger.error(reason);
 });
 
 module.exports = server;

@@ -89,3 +89,12 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable webapp-service.service
 sudo systemctl start webapp-service.service
+
+# 16. Create log file location
+sudo mkdir -p /var/log/webapp
+
+# 17. Creating soft symbolic link from the app's log file to the machine
+sudo ln -s /opt/test-src/app.log /var/log/webapp/app.log
+
+# 18. Changing ownership of the machine's log file
+sudo chown csye6225:csye6225 /var/log/webapp
