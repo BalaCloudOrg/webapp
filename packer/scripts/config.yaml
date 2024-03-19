@@ -1,0 +1,9 @@
+logging:
+  receivers:
+    files_app_logs:
+      type: files
+      include_paths: ["/var/log/webapp/app.log"]
+  service:
+    pipelines:
+      logs:
+        receivers: [files_app_logs]

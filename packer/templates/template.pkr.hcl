@@ -68,10 +68,21 @@ build {
     destination = "/tmp/image-setup-script.sh"
   }
 
+  provisioner "file" {
+    source      = "../scripts/config.yaml"
+    destination = "/tmp/config.yaml"
+  }
+
   provisioner "shell" {
     inline = [
       "chmod +x /tmp/image-setup-script.sh",
       "sudo /tmp/image-setup-script.sh"
+      # Commands to install Google Ops Agent
+      "sudo curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh",
+      "sudo bash add-google-cloud-ops-agent-repo.sh --also-install",
+      # Move the Ops Agent config file to the correct location
+      "sudo mv /tmp/config.yaml /etc/google-cloud-ops-agent/config.yaml",
+      "sudo systemctl restart google-cloud-ops-agent"
     ]
   }
 }  
