@@ -24,4 +24,4 @@ logging:
     pipelines:
       default_pipeline:
         receivers: [my-app-receiver]
-        processors: [my-app-processor, set-log-severity]
+        processors: [my-app-processor, severity-mapper]
