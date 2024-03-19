@@ -11,8 +11,11 @@ const healthCheck = require("../routes/healthCheck");
 const user = require("../routes/user");
 const authUser = require("../routes/authUser");
 const { addResHeader, pageNotFound } = require("../middlewares/utils");
+const logger = require("../utils/logging");
 
 module.exports = (app) => {
+  logger.debug("Setting up middlewares and routes");
+
   app.use(addResHeader);
 
   app.use(express.json());
