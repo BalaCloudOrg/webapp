@@ -76,7 +76,7 @@ build {
   provisioner "shell" {
     inline = [
       "chmod +x /tmp/image-setup-script.sh",
-      "sudo /tmp/image-setup-script.sh"
+      "sudo /tmp/image-setup-script.sh",
       # Commands to install Google Ops Agent
       "sudo curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh",
       "sudo bash add-google-cloud-ops-agent-repo.sh --also-install",
