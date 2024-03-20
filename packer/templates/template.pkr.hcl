@@ -45,7 +45,7 @@ packer {
   }
 }
 
-source "googlecompute"  "centos_stream_8" {
+source "googlecompute" "centos_stream_8" {
   project_id          = var.project_id
   zone                = var.zone
   source_image_family = var.source_image_family
@@ -55,7 +55,7 @@ source "googlecompute"  "centos_stream_8" {
 }
 
 
-build {
+buil {
   sources = [var.build_source]
 
   provisioner "file" {
