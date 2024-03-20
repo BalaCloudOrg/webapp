@@ -97,4 +97,4 @@ sudo mkdir -p /var/log/webapp
 sudo ln -s /opt/test-src/app.log /var/log/webapp/app.log
 
 # 18. Changing ownership of the machine's log file
-sudo chown csye6225:csye6225 /var/log/webapp
+sudo chown -R csye6225:csye6225 /var/log/webapp
