@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Verifies the format of Packer files
-        run: packer fmt -check ./packer/templates/template.pkr.hcl
+        run: packer fmt -check packer/templates/template.pkr.hcl
 
   packer-validate:
     if: github.event_name == 'pull_request'
