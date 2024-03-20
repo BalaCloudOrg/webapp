@@ -9,7 +9,7 @@ variable "zone" {
   default = "us-east1-b"
 }
 
-variable "source_image_family"  {
+variable "source_image_family" {
   type        = string
   description = "The OS of the custom image"
   default     = "centos-stream-8"
@@ -55,7 +55,7 @@ source "googlecompute" "centos_stream_8" {
 }
 
 
-build {
+buil {
   sources = [var.build_source]
 
   provisioner "file" {
