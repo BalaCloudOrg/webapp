@@ -55,7 +55,7 @@ source "googlecompute" "centos_stream_8" {
 }
 
 
-buil {
+build {
   sources = [var.build_source]
 
   provisioner "file" {
