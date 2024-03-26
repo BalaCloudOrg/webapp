@@ -10,6 +10,7 @@ const {
   validatePayloadValues,
 } = require("../utils/helper");
 const logger = require("../utils/logging");
+const publishMessage = require("../utils/pubSub");
 
 router.post("/", async (req, res, next) => {
   logger.debug("Received a request to create a user.", { body: req.body });
