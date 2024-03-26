@@ -32,6 +32,22 @@ const User = sequelize.define("User", {
   },
   account_created: { type: Sequelize.DATE, allowNull: false },
   account_updated: { type: Sequelize.DATE, allowNull: false },
+  verification_token: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4,
+    allowNull: false,
+    unique: true,
+  },
+  isVerified: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
+  token_expiration: {
+    type: Sequelize.DATE,
+    defaultValue: new Date(new Date().getTime() + 2 * 60000),
+    allowNull: true,
+  },
 });
 
 module.exports = User;

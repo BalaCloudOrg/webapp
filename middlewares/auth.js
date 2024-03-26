@@ -19,7 +19,7 @@ const auth = async (req, res, next) => {
   logger.debug(`Attempting to authenticate user: ${username}`);
 
   const user = await User.findAll({
-    attributes: ["password"],
+    attributes: ["password", "isVerified"],
     where: { username: username },
   });
   if (user.length == 0) {
@@ -27,8 +27,11 @@ const auth = async (req, res, next) => {
     isAuthorized = false;
   } else {
     try {
+      const isVerified = user[0]?.dataValues.isVerified;
+      console.log("from auth", isVerified);
       const hashedPass = user[0]?.dataValues.password;
-      isAuthorized = await bcrypt.compare(password, hashedPass);
+      const doesPasswordMatch = await bcrypt.compare(password, hashedPass);
+      isAuthorized = isVerified && doesPasswordMatch;
     } catch (error) {
       logger.error(
         `Error during authentication process for user ${username}: ${error.message}`
