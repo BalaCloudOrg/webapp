@@ -63,16 +63,13 @@ router.post("/", async (req, res, next) => {
       )}&token=${encodeURIComponent(createdUser.verification_token)}`,
     };
 
-    // Use this function to publish your message
     const topicName = "user-verification";
 
+    logger.debug("Prepared message for Pub/Sub:", pubSubMessage);
+    // Use this function to publish your message
     publishMessage(topicName, pubSubMessage)
       .then(() => logger.info("Message published"))
       .catch((err) => logger.error("Error publishing message:", err));
-    // Insert Pub/Sub publishing logic here. For now, we'll just log the message.
-    // The actual Pub/Sub publishing code will be added here later.
-    logger.debug("Prepared message for Pub/Sub:", pubSubMessage);
-    console.log(pubSubMessage);
 
     return res.status(201).send({
       id: createdUser.id,
@@ -92,31 +89,24 @@ router.get("/verify", async (req, res, next) => {
   const { username, token } = req.query;
 
   if (!username || !token) {
-    return res
-      .status(400)
-      .send({ message: "Missing username or token in request." });
+    logger.error("Bad request for user verification process.", {
+      username: username,
+      token: token,
+    });
+    return next(ApiError.badRequest());
   }
 
   try {
-    // Fetch user details from the database based on the username
     const user = await User.findOne({
       where: { username: username },
     });
 
     if (!user) {
-      return res.status(404).send({ message: "User not found." });
+      logger.error("No user found");
+      return next(ApiError.badRequest());
     }
 
-    console.log("user details,", user);
-
-    console.log("db token ", user.verification_token);
-    console.log("query token", token);
-    console.log(" result", user.verification_token === token);
     const currentTime = new Date();
-    console.log(currentTime);
-    console.log(user.token_expiration);
-    console.log("result", currentTime < user.token_expiration);
-
     // Check if the token matches and the current timestamp is less than the expiration time
     if (
       user.verification_token === token &&
@@ -129,21 +119,18 @@ router.get("/verify", async (req, res, next) => {
           where: { username: username },
         }
       );
-      const user = await User.findOne({
-        where: { username: username },
-      });
-      console.log(user.isVerified);
-      return res.send({ message: "User verified successfully." });
+      logger.debug("User updated as verified");
+      return res.status(200).end();
     } else if (currentTime >= user.token_expiration) {
-      return res
-        .status(400)
-        .send({ message: "Verification link has expired." });
+      logger.error("Verification link has expired");
+      return next(ApiError.badRequest());
     } else {
-      return res.status(400).send({ message: "Invalid verification token." });
+      logger.error("Invalid verification token");
+      return next(ApiError.badRequest());
     }
   } catch (error) {
-    console.error("Error during user verification:", error);
-    return next(error); // Pass errors to the error-handling middleware
+    logger.error("Error during user verification:", error);
+    return next(ApiError.badRequest());
   }
 });
 

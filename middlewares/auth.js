@@ -28,7 +28,7 @@ const auth = async (req, res, next) => {
   } else {
     try {
       const isVerified = user[0]?.dataValues.isVerified;
-      console.log("from auth", isVerified);
+      logger.debug("user verification status: ", isVerified);
       const hashedPass = user[0]?.dataValues.password;
       const doesPasswordMatch = await bcrypt.compare(password, hashedPass);
       isAuthorized = isVerified && doesPasswordMatch;

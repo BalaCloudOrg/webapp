@@ -45,7 +45,7 @@ const User = sequelize.define("User", {
   },
   token_expiration: {
     type: Sequelize.DATE,
-    defaultValue: new Date(new Date().getTime() + 2 * 60000),
+    defaultValue: null,
     allowNull: true,
   },
 });
