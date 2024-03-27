@@ -58,7 +58,7 @@ router.post("/", async (req, res, next) => {
     const pubSubMessage = {
       username: createdUser.username,
       verificationToken: createdUser.verification_token,
-      verificationUrl: `https://cloudnativewebapp.me:3000/v1/user/verify?username=${encodeURIComponent(
+      verificationUrl: `http://cloudnativewebapp.me:3000/v1/user/verify?username=${encodeURIComponent(
         createdUser.username
       )}&token=${encodeURIComponent(createdUser.verification_token)}`,
     };
@@ -88,11 +88,15 @@ router.post("/", async (req, res, next) => {
 router.get("/verify", async (req, res, next) => {
   const { username, token } = req.query;
 
-  if (!username || !token) {
-    logger.error("Bad request for user verification process.", {
-      username: username,
-      token: token,
-    });
+  if (
+    req.headers.authorization ||
+    Object.keys(req.params).length > 0 ||
+    Object.keys(req.query).length !== 2 ||
+    Object.keys(req.body).length > 0 ||
+    !req.query.username ||
+    !req.query.token
+  ) {
+    logger.error("Bad request for user verification process.");
     return next(ApiError.badRequest());
   }
 
@@ -134,8 +138,13 @@ router.get("/verify", async (req, res, next) => {
   }
 });
 
+router.all("/verify", (req, res, next) => {
+  logger.warn("Method not allowed for the route.", { method: req.method });
+  next(ApiError.methodNotAllowed());
+});
+
 router.all("/", (req, res, next) => {
-  logger.warn("Method not allowed for the route.", { method: req.method }); // Warn about method not allowed
+  logger.warn("Method not allowed for the route.", { method: req.method });
   next(ApiError.methodNotAllowed());
 });
 
