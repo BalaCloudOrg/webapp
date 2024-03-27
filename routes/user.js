@@ -63,7 +63,7 @@ router.post("/", async (req, res, next) => {
       )}&token=${encodeURIComponent(createdUser.verification_token)}`,
     };
 
-    const topicName = "user-verification";
+    const topicName = "verify_email";
 
     logger.debug("Prepared message for Pub/Sub:", pubSubMessage);
     // Use this function to publish your message
