@@ -48,6 +48,15 @@ const User = sequelize.define("User", {
     defaultValue: null,
     allowNull: true,
   },
+  email_sent: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
+  email_sent_at: {
+    type: Sequelize.DATE,
+    defaultValue: null,
+    allowNull: true,
+  },
 });
 
 module.exports = User;
