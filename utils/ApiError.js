@@ -22,6 +22,10 @@ class ApiError {
   static serviceUnavailable() {
     return new ApiError(503);
   }
+
+  static forbidden() {
+    return new ApiError(403);
+  }
 }
 
 module.exports = ApiError;
