@@ -14,7 +14,6 @@ const auth = async (req, res, next) => {
   const fields = decrypted.split(":");
   const username = fields[0];
   const password = fields[1];
-  let isAuthorized;
 
   logger.debug(`Attempting to authenticate user: ${username}`);
 
@@ -24,23 +23,23 @@ const auth = async (req, res, next) => {
   });
   if (user.length == 0) {
     logger.info(`No user found with username: ${username}`);
-    isAuthorized = false;
+    return next(ApiError.unAuthorized());
   } else {
     try {
+      const hashedPass = user[0]?.dataValues.password;
+      const doesPasswordMatch = await bcrypt.compare(password, hashedPass);
+      if (!doesPasswordMatch) return next(ApiError.unAuthorized());
+
       const isVerified = user[0]?.dataValues.isVerified;
       logger.debug("user verification status: ", isVerified);
       if (!isVerified) return next(ApiError.forbidden());
-      const hashedPass = user[0]?.dataValues.password;
-      const doesPasswordMatch = await bcrypt.compare(password, hashedPass);
-      isAuthorized = isVerified && doesPasswordMatch;
     } catch (error) {
       logger.error(
         `Error during authentication process for user ${username}: ${error.message}`
       );
-      isAuthorized = false;
+      return next(ApiError.unAuthorized());
     }
   }
-  if (!isAuthorized) next(ApiError.unAuthorized());
 
   req.username = username;
   next();
