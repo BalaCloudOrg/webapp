@@ -135,12 +135,13 @@ jobs:
             else
               echo "file already exists"
             fi'\
+            --network-tier=STANDARD\
             --network=projects/webapp-infra/global/networks/a3-vpc\
             --subnet=projects/webapp-infra/regions/us-east1/subnetworks/webapp\
             --tags=web-app\
             --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
             --scopes=logging-write,monitoring-write,pubsub,cloud-platform\
-            --image=global/images/${{ secrets.CUSTOM_IMAGE_ID }}\
+            --image=${{ secrets.CUSTOM_IMAGE_ID }}\
             --boot-disk-type=pd-balanced\
             --boot-disk-kms-keyring=webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}\
             --boot-disk-kms-key=compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
