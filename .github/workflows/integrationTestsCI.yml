@@ -11,12 +11,11 @@ jobs:
     name: Integration tests job
     runs-on: ubuntu-latest
     env:
-      PORT: "3000"
-      MYSQL_HOST: "127.0.0.1"
-      MYSQL_USER: "user1"
-      MYSQL_PASSWORD: "Abcd@123"
-      MYSQL_DATABASE: "test"
-      MYSQL_ROOT_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_HOST: ${{ secrets.IT_MYSQL_HOST }}
+      MYSQL_USER: ${{ secrets.IT_MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.IT_MYSQL_PASS }}
+      MYSQL_DATABASE: ${{ secrets.IT_MYSQL_DB }}
+      MYSQL_ROOT_PWD: ${{ secrets.IT_MYSQL_ROOT_PWD }}
 
     steps:
       - name: Checkout code

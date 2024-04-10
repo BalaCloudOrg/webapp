@@ -12,6 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      PROJECT_NAME: webapp-infra
+      REGION: us-east1
+      MACHINE_TYPE: e2-medium
+      NETWORK: a3-vpc
+      SUBNET: webapp
+      TAG: web-app
+      SERVICE_ACCOUNT: vm-service-account@webapp-infra.iam.gserviceaccount.com
+      SCOPES: logging-write,monitoring-write,pubsub,cloud-platform
+      BOOT_DISK_TYPE: pd-balanced
+      MIG_NAME: my-mig
+      TEMPLATE_NAME: updated-template-${{ secrets.CUSTOM_IMAGE_ID }}
 
     steps:
       - name: Checkout code
@@ -30,10 +41,10 @@ jobs:
 
       - name: Create new instance template using the new custom image
         run: |
-          gcloud compute instance-templates create updated-template-${{ secrets.CUSTOM_IMAGE_ID }}\
-            --machine-type=e2-medium\
-            --region=us-east1\
-            --instance-template-region=us-east1\
+          gcloud compute instance-templates create ${{ env.TEMPLATE_NAME }}\
+            --machine-type=${{ env.MACHINE_TYPE }}\
+            --region=${{ env.REGION }}\
+            --instance-template-region=${{ env.REGION }}\
             --metadata=startup-script='#!/bin/bash
             if [ ! -f /opt/config.env ]; then
               cat <<EOF > /opt/config.env
@@ -45,26 +56,25 @@ jobs:
             else
               echo "file already exists"
             fi'\
-            --network-tier=STANDARD\
-            --network=projects/webapp-infra/global/networks/a3-vpc\
-            --subnet=projects/webapp-infra/regions/us-east1/subnetworks/webapp\
-            --tags=web-app\
-            --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
-            --scopes=logging-write,monitoring-write,pubsub,cloud-platform\
+            --network=projects/${{ env.PROJECT_NAME }}/global/networks/${{ env.NETWORK }}\
+            --subnet=projects/${{ env.PROJECT_NAME }}/regions/us-east1/subnetworks/${{ env.SUBNET }}\
+            --tags=${{ env.TAG }}\
+            --service-account=${{ env.SERVICE_ACCOUNT }}\
+            --scopes=${{ env.SCOPES }}\
             --image=${{ secrets.CUSTOM_IMAGE_ID }}\
-            --boot-disk-type=pd-balanced\
-            --boot-disk-kms-keyring=projects/webapp-infra/locations/us-east1/keyRings/webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}\
-            --boot-disk-kms-key=projects/webapp-infra/locations/us-east1/keyRings/webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}/cryptoKeys/compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
+            --boot-disk-type=${{ env.BOOT_DISK_TYPE }}\
+            --boot-disk-kms-keyring=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}\
+            --boot-disk-kms-key=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}/cryptoKeys/${{ secrets.KMS_KEY }}\
             --no-address
 
       - name: Set the Managed Instance Group to use the new instance template
-        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
+        run: gcloud compute instance-groups managed set-instance-template ${{ env.MIG_NAME }} --template=https://www.googleapis.com/compute/v1/projects/${{ env.PROJECT_NAME }}/regions/${{ env.REGION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} --region=${{ env.REGION }}
 
       - name: Set the Managed Instance Group to update existing VMs with the new instance template
-        run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
+        run: gcloud compute instance-groups managed rolling-action start-update ${{ env.MIG_NAME }} --version=template=https://www.googleapis.com/compute/v1/projects/${{ env.PROJECT_NAME }}/regions/${{ env.REGION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} --region=${{ env.REGION }}
 
       - name: Wait till all the existing VMs gets updated with the new template
-        run: gcloud compute instance-groups managed wait-until my-mig --version-target-reached --region=us-east1
+        run: gcloud compute instance-groups managed wait-until ${{ env.MIG_NAME }} --version-target-reached --region=${{ env.REGION }}
 
   packer-validate:
     if: github.event_name == 'pull_request'
