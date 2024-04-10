@@ -10,6 +10,41 @@ jobs:
   packer-format:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Verifies the format of Packer files
+        run: packer fmt -check ./packer/templates/template.pkr.hcl
+
+  packer-validate:
+    if: github.event_name == 'pull_request'
+    needs: [packer-format]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+        # The presence of this zip in the root directory is required for packer validate
+        # since in the file provisioner of the main packer excepts to find a zip file
+        # ../../zipfile to build the custom image
+      - name: Zip application code
+        run: zip -r test-src.zip .
+
+      - name: Packer init - get plugins
+        run: packer init .
+        working-directory: "./packer/templates"
+
+      - name: Validate Packer template
+        run: packer validate .
+        working-directory: "./packer/templates"
+
+      - name: Clear up the application zip file
+        run: rm -rf test-src.zip
+
+  packer-build:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       PROJECT_NAME: webapp-infra
@@ -28,8 +63,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Verifies the format of Packer files
-        run: packer fmt -check ./packer/templates/template.pkr.hcl
+      - name: Zip application code
+        run: zip -r test-src.zip .
 
       - name: "GCloud auth"
         uses: "google-github-actions/auth@v2"
@@ -38,6 +73,17 @@ jobs:
 
       - name: "Set up GCloud SDK"
         uses: "google-github-actions/setup-gcloud@v2"
+
+      - name: Packer init - get plugins
+        run: packer init .
+        working-directory: "./packer/templates"
+
+      - name: Prepare environment variables
+        run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Build Packer image
+        run: packer build -var "project_id=${{ secrets.GCP_PROJECT_ID }}" -var "image_name=${{ secrets.CUSTOM_IMAGE_ID }}" template.pkr.hcl
+        working-directory: "./packer/templates"
 
       - name: Create new instance template using the new custom image
         run: |
@@ -75,101 +121,3 @@ jobs:
 
       - name: Wait till all the existing VMs gets updated with the new template
         run: gcloud compute instance-groups managed wait-until ${{ env.MIG_NAME }} --version-target-reached --region=${{ env.REGION }}
-
-  packer-validate:
-    if: github.event_name == 'pull_request'
-    needs: [packer-format]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-        # The presence of this zip in the root directory is required for packer validate
-        # since in the file provisioner of the main packer excepts to find a zip file
-        # ../../zipfile to build the custom image
-      - name: Zip application code
-        run: zip -r test-src.zip .
-
-      - name: Packer init - get plugins
-        run: packer init .
-        working-directory: "./packer/templates"
-
-      - name: Validate Packer template
-        run: packer validate .
-        working-directory: "./packer/templates"
-
-      - name: Clear up the application zip file
-        run: rm -rf test-src.zip
-
-  packer-build:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Zip application code
-        run: zip -r test-src.zip .
-
-      - name: "GCloud auth"
-        uses: "google-github-actions/auth@v2"
-        with:
-          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
-
-      - name: "Set up GCloud SDK"
-        uses: "google-github-actions/setup-gcloud@v2"
-
-      - name: Packer init - get plugins
-        run: packer init .
-        working-directory: "./packer/templates"
-
-      - name: Prepare environment variables
-        run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
-      - name: Build Packer image
-        run: packer build -var "project_id=${{ secrets.GCP_PROJECT_ID }}" -var "image_name=${{ secrets.CUSTOM_IMAGE_ID }}" template.pkr.hcl
-        working-directory: "./packer/templates"
-
-      - name: Create new instance template using the new custom image
-        run: |
-          gcloud compute instance-templates create updated-template-${{ secrets.CUSTOM_IMAGE_ID }}\
-            --machine-type=e2-medium\
-            --region=us-east1\
-            --instance-template-region=us-east1\
-            --metadata=startup-script='#!/bin/bash
-            if [ ! -f /opt/config.env ]; then
-              cat <<EOF > /opt/config.env
-              MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
-              MYSQL_USER=${{ secrets.MYSQL_USER }}
-              MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-              MYSQL_HOST=${{ secrets.MYSQL_HOST }}
-          EOF
-            else
-              echo "file already exists"
-            fi'\
-            --network=projects/webapp-infra/global/networks/a3-vpc\
-            --subnet=projects/webapp-infra/regions/us-east1/subnetworks/webapp\
-            --tags=web-app\
-            --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
-            --scopes=logging-write,monitoring-write,pubsub,cloud-platform\
-            --image=${{ secrets.CUSTOM_IMAGE_ID }}\
-            --boot-disk-type=pd-balanced\
-            --boot-disk-kms-keyring=webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}\
-            --boot-disk-kms-key=compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
-            --boot-disk-auto-delete=yes\
-            --no-address
-
-      - name: Set the Managed Instance Group to use the new instance template
-        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
-
-      - name: Set the Managed Instance Group to update existing VMs with the new instance template
-        run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
-
-      - name: Wait till all the existing VMs gets updated with the new template
-        run: gcloud compute instance-groups managed wait-until my-mig --version-target-reached --region=us-east1
-
-      - name: Reset the Managed Instance Group's update policy to opportunistic
-        run: gcloud compute instance-groups managed update my-mig --update-policy-type=opportunistic --region=us-east1
