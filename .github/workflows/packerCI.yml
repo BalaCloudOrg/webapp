@@ -56,7 +56,7 @@ jobs:
             else
               echo "file already exists"
             fi'\
-            --network-tier=PREMIUM
+            --network-tier=PREMIUM\
             --network=projects/${{ env.PROJECT_NAME }}/global/networks/${{ env.NETWORK }}\
             --subnet=projects/${{ env.PROJECT_NAME }}/regions/us-east1/subnetworks/${{ env.SUBNET }}\
             --tags=${{ env.TAG }}\
