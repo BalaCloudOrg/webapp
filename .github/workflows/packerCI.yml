@@ -73,3 +73,32 @@ jobs:
       - name: Build Packer image
         run: packer build -var "project_id=${{ secrets.GCP_PROJECT_ID }}" -var "image_name=dev-centos-stream8-image-${{ env.TIMESTAMP }}" template.pkr.hcl
         working-directory: "./packer/templates"
+
+      - name: Create instance template using gcloud
+        run: |
+          gcloud compute instance-templates create webapp-instance-opq \     
+            --machine-type=e2-medium \
+            --region=us-east1 \
+            --metadata=startup-script='#!/bin/bash
+            if [ ! -f /opt/config.env ]; then
+              cat <<EOF > /opt/config.env
+              MYSQL_DATABASE="webapp"
+              MYSQL_USER="user1"
+              MYSQL_PASSWORD="1Wui]BN["
+              MYSQL_HOST="10.28.0.2"
+          EOF
+            else
+              echo "file already exists"
+            fi' \
+            --network=projects/webapp-infra/global/networks/a3-vpc \
+            --subnet=projects/webapp-infra/regions/us-east1/subnetworks/webapp \
+            --tags=web-app \
+            --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com \
+            --scopes=logging-write,monitoring-write,https://www.googleapis.com/auth/pubsub,cloud-platform \
+            --create-disk=boot=yes,image-family=centos-custom-image,type=pd-balanced,size=20GB \
+            --no-address
+
+      - name: set instance template in the mig
+        run:
+          gcloud compute instance-groups managed set-instance-template my-mig \
+          --template=projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-ijk --region=us-east1
