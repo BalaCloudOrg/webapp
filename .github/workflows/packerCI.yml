@@ -53,8 +53,8 @@ jobs:
             --scopes=logging-write,monitoring-write,pubsub,cloud-platform\
             --image=${{ secrets.CUSTOM_IMAGE_ID }}\
             --boot-disk-type=pd-balanced\
-            --boot-disk-kms-keyring=webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}\
-            --boot-disk-kms-key=compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
+            --boot-disk-kms-keyring=projects/webapp-infra/locations/us-east1/keyRings/webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}\
+            --boot-disk-kms-key=projects/webapp-infra/locations/us-east1/keyRings/webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}/cryptoKeys/compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
             --no-address
 
       - name: Set the Managed Instance Group to use the new instance template
