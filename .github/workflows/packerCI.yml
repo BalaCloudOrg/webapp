@@ -52,13 +52,16 @@ jobs:
             --no-address\
 
       - name: Set the Managed Instance Group to use the new instance template
-        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-opq --region=us-east1 --type=opportunistic
+        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-opq --region=us-east1
 
       - name: Set the Managed Instance Group to update existing VMs with the new instance template
         run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-opq --region=us-east1
 
       - name: Wait till all the existing VMs gets updated with the new template
         run: gcloud compute instance-groups managed wait-until my-mig --version-target-reached --region=us-east1
+
+      - name: Reset the Managed Instance Group's update policy to opportunistic
+        run: gcloud compute instance-groups managed update my-mig --update-policy-type=opportunistic --region=us-east1
 
   packer-validate:
     if: github.event_name == 'pull_request'
