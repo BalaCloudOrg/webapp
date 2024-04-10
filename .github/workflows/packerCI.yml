@@ -27,7 +27,7 @@ jobs:
       - name: "Set up GCloud SDK"
         uses: "google-github-actions/setup-gcloud@v2"
 
-      - name: Create instance template using gcloud
+      - name: Create new instance template using the new custom image
         run: |
           gcloud compute instance-templates create webapp-instance-opq\
             --machine-type=e2-medium\
@@ -51,8 +51,22 @@ jobs:
             --create-disk=boot=yes,image-family=centos-custom-image,type=pd-balanced,size=20GB\
             --no-address\
 
-      - name: set instance template in the mig
-        run: gcloud compute instance-groups managed set-instance-template my-mig --template=projects/webapp-infra/global/instanceTemplates/webapp-instance-opq --region=us-east1
+      - name: Set the Managed Instance Group to use the new instance template
+        run: |
+          gcloud compute instance-groups managed set-instance-template my-mig\
+          --template=projects/webapp-infra/global/instanceTemplates/webapp-instance-opq\
+          --region=us-east1
+
+      - name: Set the Managed Instance Group to update existing VMs with the new instance template
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update my-mig\
+          --version=template=projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance\
+          --region=us-east1
+
+      - name: Wait till all the existing VMs gets updated with the new template
+        run: |
+          gcloud compute instance-groups managed wait-until my-mig\
+          --version-target-reached --region=us-east1
 
   packer-validate:
     if: github.event_name == 'pull_request'
