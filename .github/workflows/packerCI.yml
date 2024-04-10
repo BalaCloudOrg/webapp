@@ -52,7 +52,7 @@ jobs:
             --no-address\
 
       - name: set instance template in the mig
-        run: gcloud compute instance-groups managed set-instance-template my-mig --template=projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-opq --region=us-east1
+        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/global/instanceTemplates/webapp-instance-opq --region=us-east1
 
   packer-validate:
     if: github.event_name == 'pull_request'
