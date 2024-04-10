@@ -55,7 +55,6 @@ jobs:
             --boot-disk-type=pd-balanced\
             --boot-disk-kms-keyring=webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }}\
             --boot-disk-kms-key=compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
-            --boot-disk-auto-delete=yes\
             --no-address
 
       - name: Set the Managed Instance Group to use the new instance template
