@@ -77,7 +77,7 @@ jobs:
 
       - name: Create new instance template using the new custom image
         run: |
-          gcloud compute instance-templates create webapp-instance-new\
+          gcloud compute instance-templates create updated-template-${{ secrets.CUSTOM_IMAGE_ID }}-${{ secrets.CUSTOM_IMAGE_ID }}\
             --machine-type=e2-medium\
             --instance-template-region=us-east1\
             --metadata=startup-script='#!/bin/bash
@@ -100,10 +100,10 @@ jobs:
             --no-address\
 
       - name: Set the Managed Instance Group to use the new instance template
-        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-new --region=us-east1
+        run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
 
       - name: Set the Managed Instance Group to update existing VMs with the new instance template
-        run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-new --region=us-east1
+        run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
 
       - name: Wait till all the existing VMs gets updated with the new template
         run: gcloud compute instance-groups managed wait-until my-mig --version-target-reached --region=us-east1

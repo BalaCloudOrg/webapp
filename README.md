@@ -9,4 +9,4 @@ To test
 
 - npm run test
 
-custom_image_id : centos-custom-image-id-1
+custom_image_id : centos-custom-image-id-2
