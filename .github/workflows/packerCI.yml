@@ -61,10 +61,10 @@ jobs:
         run: gcloud compute instance-groups managed set-instance-template my-mig --template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
 
       - name: Set the Managed Instance Group to update existing VMs with the new instance template
-        run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }}
+        run: gcloud compute instance-groups managed rolling-action start-update my-mig --version=template=https://www.googleapis.com/compute/v1/projects/webapp-infra/regions/us-east1/instanceTemplates/updated-template-${{ secrets.CUSTOM_IMAGE_ID }} --region=us-east1
 
       - name: Wait till all the existing VMs gets updated with the new template
-        run: gcloud compute instance-groups managed wait-until my-mig --version-target-reached
+        run: gcloud compute instance-groups managed wait-until my-mig --version-target-reached --region=us-east1
 
   packer-validate:
     if: github.event_name == 'pull_request'
