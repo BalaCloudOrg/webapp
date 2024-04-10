@@ -10,71 +10,12 @@ jobs:
   packer-format:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-      PROJECT_NAME: webapp-infra
-      REGION: us-east1
-      MACHINE_TYPE: e2-medium
-      NETWORK: a3-vpc
-      SUBNET: webapp
-      TAG: web-app
-      SERVICE_ACCOUNT: vm-service-account@webapp-infra.iam.gserviceaccount.com
-      SCOPES: logging-write,monitoring-write,pubsub,cloud-platform
-      BOOT_DISK_TYPE: pd-balanced
-      MIG_NAME: my-mig
-      TEMPLATE_NAME: updated-template-${{ secrets.CUSTOM_IMAGE_ID }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Verifies the format of Packer files
         run: packer fmt -check ./packer/templates/template.pkr.hcl
-
-      - name: "GCloud auth"
-        uses: "google-github-actions/auth@v2"
-        with:
-          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
-
-      - name: "Set up GCloud SDK"
-        uses: "google-github-actions/setup-gcloud@v2"
-
-      - name: Create new instance template using the new custom image
-        run: |
-          gcloud compute instance-templates create ${{ env.TEMPLATE_NAME }}\
-            --machine-type=${{ env.MACHINE_TYPE }}\
-            --region=${{ env.REGION }}\
-            --instance-template-region=${{ env.REGION }}\
-            --metadata=startup-script='#!/bin/bash
-            if [ ! -f /opt/config.env ]; then
-              cat <<EOF > /opt/config.env
-              MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
-              MYSQL_USER=${{ secrets.MYSQL_USER }}
-              MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-              MYSQL_HOST=${{ secrets.MYSQL_HOST }}
-          EOF
-            else
-              echo "file already exists"
-            fi'\
-            --network-tier=PREMIUM\
-            --network=projects/${{ env.PROJECT_NAME }}/global/networks/${{ env.NETWORK }}\
-            --subnet=projects/${{ env.PROJECT_NAME }}/regions/us-east1/subnetworks/${{ env.SUBNET }}\
-            --tags=${{ env.TAG }}\
-            --service-account=${{ env.SERVICE_ACCOUNT }}\
-            --scopes=${{ env.SCOPES }}\
-            --image=${{ secrets.CUSTOM_IMAGE_ID }}\
-            --boot-disk-type=${{ env.BOOT_DISK_TYPE }}\
-            --boot-disk-kms-keyring=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}\
-            --boot-disk-kms-key=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}/cryptoKeys/${{ secrets.KMS_KEY }}
-
-      - name: Set the Managed Instance Group to use the new instance template
-        run: gcloud compute instance-groups managed set-instance-template ${{ env.MIG_NAME }} --template=https://www.googleapis.com/compute/v1/projects/${{ env.PROJECT_NAME }}/regions/${{ env.REGION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} --region=${{ env.REGION }}
-
-      - name: Set the Managed Instance Group to update existing VMs with the new instance template
-        run: gcloud compute instance-groups managed rolling-action start-update ${{ env.MIG_NAME }} --version=template=https://www.googleapis.com/compute/v1/projects/${{ env.PROJECT_NAME }}/regions/${{ env.REGION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} --region=${{ env.REGION }}
-
-      - name: Wait till all the existing VMs gets updated with the new template
-        run: gcloud compute instance-groups managed wait-until ${{ env.MIG_NAME }} --version-target-reached --region=${{ env.REGION }}
 
   packer-validate:
     if: github.event_name == 'pull_request'
@@ -111,6 +52,7 @@ jobs:
       MACHINE_TYPE: e2-medium
       NETWORK: a3-vpc
       SUBNET: webapp
+      NETWORK_TIER: PREMIUM
       TAG: web-app
       SERVICE_ACCOUNT: vm-service-account@webapp-infra.iam.gserviceaccount.com
       SCOPES: logging-write,monitoring-write,pubsub,cloud-platform
@@ -161,6 +103,7 @@ jobs:
             else
               echo "file already exists"
             fi'\
+            --network-tier=${{ env.NETWORK_TIER }}
             --network=projects/${{ env.PROJECT_NAME }}/global/networks/${{ env.NETWORK }}\
             --subnet=projects/${{ env.PROJECT_NAME }}/regions/us-east1/subnetworks/${{ env.SUBNET }}\
             --tags=${{ env.TAG }}\
@@ -169,8 +112,7 @@ jobs:
             --image=${{ secrets.CUSTOM_IMAGE_ID }}\
             --boot-disk-type=${{ env.BOOT_DISK_TYPE }}\
             --boot-disk-kms-keyring=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}\
-            --boot-disk-kms-key=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}/cryptoKeys/${{ secrets.KMS_KEY }}\
-            --no-address
+            --boot-disk-kms-key=projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/keyRings/${{ secrets.KMS_KEYRING }}/cryptoKeys/${{ secrets.KMS_KEY }}
 
       - name: Set the Managed Instance Group to use the new instance template
         run: gcloud compute instance-groups managed set-instance-template ${{ env.MIG_NAME }} --template=https://www.googleapis.com/compute/v1/projects/${{ env.PROJECT_NAME }}/regions/${{ env.REGION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} --region=${{ env.REGION }}
