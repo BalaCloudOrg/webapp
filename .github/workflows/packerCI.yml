@@ -49,7 +49,7 @@ jobs:
             --tags=web-app\
             --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
             --scopes=logging-write,monitoring-write,https://www.googleapis.com/auth/pubsub,cloud-platform\
-            --create-disk=boot=yes,image=${{ secrets.CUSTOM_IMAGE_ID }},type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-keyring=webapp-key-ring-pvi,kms-key=compute-instance-key-pvi\
+            --create-disk=boot=yes,image=${{ secrets.CUSTOM_IMAGE_ID }},type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-keyring=webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }},kms-key=compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
             --no-address\
 
       - name: Set the Managed Instance Group to use the new instance template
@@ -139,7 +139,7 @@ jobs:
             --tags=web-app\
             --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
             --scopes=logging-write,monitoring-write,https://www.googleapis.com/auth/pubsub,cloud-platform\
-            --create-disk=boot=yes,image=${{ secrets.CUSTOM_IMAGE_ID }},type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-keyring=webapp-key-ring-pvi,kms-key=compute-instance-key-pvi\
+            --create-disk=boot=yes,image=${{ secrets.CUSTOM_IMAGE_ID }},type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-keyring=webapp-key-ring-${{ secrets. CRYPTO_KEY_SUFFIX }},kms-key=compute-instance-key-${{ secrets. CRYPTO_KEY_SUFFIX }}\
             --no-address\
 
       - name: Set the Managed Instance Group to use the new instance template
