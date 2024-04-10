@@ -48,7 +48,7 @@ jobs:
             --tags=web-app\
             --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
             --scopes=logging-write,monitoring-write,https://www.googleapis.com/auth/pubsub,cloud-platform\
-            --create-disk=boot=yes,image-family=centos-custom-image,type=pd-balanced,size=20GB,auto-delete=yes,kms-key=compute-instance-key-pvi\
+            --create-disk=boot=yes,image-family=centos-custom-image,type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-key=compute-instance-key-pvi\
             --no-address\
 
       - name: Set the Managed Instance Group to use the new instance template
