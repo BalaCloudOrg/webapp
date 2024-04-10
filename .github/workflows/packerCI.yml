@@ -29,8 +29,8 @@ jobs:
 
       - name: Create instance template using gcloud
         run: |
-          gcloud compute instance-templates create webapp-instance-opq
-            --machine-type=e2-medium
+          gcloud compute instance-templates create webapp-instance-opq\
+            --machine-type=e2-medium\
             --region=us-east1
             --metadata=startup-script='#!/bin/bash
             if [ ! -f /opt/config.env ]; then
