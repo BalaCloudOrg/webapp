@@ -35,10 +35,10 @@ jobs:
             --metadata=startup-script='#!/bin/bash
             if [ ! -f /opt/config.env ]; then
               cat <<EOF > /opt/config.env
-              MYSQL_DATABASE="webapp"
-              MYSQL_USER="user1"
-              MYSQL_PASSWORD="1Wui]BN["
-              MYSQL_HOST="10.28.0.2"
+              MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+              MYSQL_USER=${{ secrets.MYSQL_USER }}
+              MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+              MYSQL_HOST=${{ secrets.MYSQL_HOST }}
           EOF
             else
               echo "file already exists"
@@ -48,7 +48,7 @@ jobs:
             --tags=web-app\
             --service-account=vm-service-account@webapp-infra.iam.gserviceaccount.com\
             --scopes=logging-write,monitoring-write,https://www.googleapis.com/auth/pubsub,cloud-platform\
-            --create-disk=boot=yes,image=dev-centos-stream8-image-20240403165954,type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-keyring=webapp-key-ring-pvi,kms-key=compute-instance-key-pvi\
+            --create-disk=boot=yes,image=${{ secrets.CUSTOM_IMAGE_ID }},type=pd-balanced,size=20GB,auto-delete=yes,kms-location=us-east1,kms-keyring=webapp-key-ring-pvi,kms-key=compute-instance-key-pvi\
             --no-address\
 
       - name: Set the Managed Instance Group to use the new instance template
