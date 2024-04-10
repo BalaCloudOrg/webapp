@@ -52,7 +52,7 @@ jobs:
             --no-address\
 
       - name: set instance template in the mig
-        run:
+        run: |
           gcloud compute instance-groups managed set-instance-template my-mig\
           --template=projects/webapp-infra/regions/us-east1/instanceTemplates/webapp-instance-ijk --region=us-east1
 
