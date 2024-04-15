@@ -53,7 +53,7 @@ describe("test", () => {
   });
 
   it("should return a 201 status code and the created user details for POST request with a valid body", async () => {
-    res = await request(server).post("/v1/user").send(testData);
+    res = await request(server).post("/v8/user").send(testData);
 
     expect(res.status).toBe(201);
     expect(res.body.first_name).toMatch(testData.first_name);
@@ -67,7 +67,7 @@ describe("test", () => {
   it("should return a 200 status code and the respective user details for GET request with valid credentials", async () => {
     await verifyUser(testData.username);
     const res = await request(server)
-      .get("/v1/user/self")
+      .get("/v8/user/self")
       .set("Authorization", `Basic ${authToken}`);
 
     expect(res.status).toBe(200);
@@ -82,7 +82,7 @@ describe("test", () => {
   it("should return a 204 status code and no response body for PUT request, given correct login credentials and the first_name and last_name fields to update", async () => {
     await verifyUser(testData.username);
     const res = await request(server)
-      .put("/v1/user/self")
+      .put("/v8/user/self")
       .set("Authorization", `Basic ${authToken}`)
       .send({ first_name: "Jane", last_name: "Mary" });
 
@@ -93,7 +93,7 @@ describe("test", () => {
   it("should return a 200 status code and the updated user details for GET request with valid credentials", async () => {
     await verifyUser(testData.username);
     const res = await request(server)
-      .get("/v1/user/self")
+      .get("/v8/user/self")
       .set("Authorization", `Basic ${authToken}`);
 
     expect(res.status).toBe(200);

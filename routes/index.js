@@ -22,9 +22,9 @@ module.exports = (app) => {
 
   app.use("/healthz", healthCheck);
 
-  app.use("/v1/user", user);
+  app.use("/v8/user", user);
 
-  app.use("/v1/user/self", authUser);
+  app.use("/v8/user/self", authUser);
 
   app.use("*", pageNotFound);
 };
