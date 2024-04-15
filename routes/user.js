@@ -58,7 +58,7 @@ router.post("/", async (req, res, next) => {
     const pubSubMessage = {
       username: createdUser.username,
       verificationToken: createdUser.verification_token,
-      verificationUrl: `https://cloudnativewebapp.me/v1/user/verify?username=${encodeURIComponent(
+      verificationUrl: `https://cloudnativewebapp.me/v8/user/verify?username=${encodeURIComponent(
         createdUser.username
       )}&token=${encodeURIComponent(createdUser.verification_token)}`,
     };
